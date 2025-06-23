@@ -1,0 +1,20 @@
+.env# Node.js
+node_modules/
+dist/
+.next/
+out/
+.env
+.env.local
+.env.*.local
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# Build artifacts
+*.tsbuildinfo
