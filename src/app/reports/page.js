@@ -60,56 +60,127 @@ export default function ReportPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 p-4 sm:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* ফিল্টার এবং বাটন সেকশন (no-print ক্লাস যোগ করা হয়েছে) */}
-        <div className="no-print p-6 bg-white rounded-lg shadow-md mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-3xl font-bold text-gray-800">Monthly Overtime Report</h1>
-            {reportData && (
-              <button onClick={handlePrint} className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg">
-                🖨️ Print / Save as PDF
-              </button>
-            )}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-            <div><label htmlFor="employee">Select Employee</label><select id="employee" value={selectedEmployee} onChange={(e) => setSelectedEmployee(e.target.value)} className="w-full p-2 border rounded-md"><option value="">-- Select --</option>{employees.map(emp => <option key={emp._id} value={emp._id}>{emp.name} ({emp.employeeId})</option>)}</select></div>
-            <div><label htmlFor="month">Select Month</label><input type="month" id="month" value={month} onChange={(e) => setMonth(e.target.value)} className="w-full p-2 border rounded-md" /></div>
-            <button onClick={handleGenerateReport} disabled={isLoading} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg disabled:bg-blue-400">{isLoading ? 'Generating...' : 'Generate Report'}</button>
-          </div>
-          {message && <p className="mt-4 text-center font-semibold text-red-500">{message}</p>}
+   <main>
+  {/* মূল কন্টেইনারে প্যাডিং এবং সর্বোচ্চ প্রস্থ layout.js থেকে আসছে */}
+  <div className="space-y-8">
+    
+    {/* --- ফিল্টার এবং বাটন সেকশন --- */}
+    <div className="no-print p-6 bg-white rounded-xl shadow-lg">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Monthly Reports</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Select an employee and month to generate a report.
+          </p>
         </div>
-
-        {/* --- সমাধান: এই div-টিতে printable-area ক্লাস যোগ করা হয়েছে --- */}
+        {/* রিপোর্ট জেনারেট হলেই শুধু প্রিন্ট বাটনটি দেখানো হবে */}
         {reportData && (
-          <div className="printable-area bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-2 text-center">Overtime Report</h2>
-            <hr className="mb-4" />
-            <div className="flex justify-between items-start mb-6">
-              <div><p><strong>Employee:</strong> {reportData.employeeDetails.name}</p><p><strong>ID:</strong> {reportData.employeeDetails.employeeId}</p></div>
-              <div><p><strong>Month:</strong> {month}</p><p><strong>Report Date:</strong> {new Date().toLocaleDateString()}</p></div>
-            </div>
-            <div className="grid grid-cols-3 gap-6 mb-8 text-center">
-              <div className="border border-green-300 bg-green-50 p-4 rounded-lg"><h3>Total Overtime</h3><p className="text-2xl font-bold">{summary.totalOvertime} hours</p></div>
-              <div className="border border-yellow-300 bg-yellow-50 p-4 rounded-lg"><h3>Hourly Rate</h3><p className="text-2xl font-bold">{reportData.employeeDetails.hourlyRate} BDT</p></div>
-              <div className="border border-red-300 bg-red-50 p-4 rounded-lg"><h3>Total Bill</h3><p className="text-2xl font-bold">{summary.totalBill} BDT</p></div>
-            </div>
-            <h3 className="text-xl font-bold mb-4 mt-8">Detailed Attendance Log</h3>
-            <table className="min-w-full border">
-              <thead className="bg-gray-100 border-b">
-                <tr><th>Date</th><th>In Time</th><th>Out Time</th><th>Duty Hours</th><th className="text-red-600">Overtime Hours</th></tr>
-              </thead>
-              <tbody className="text-center">
-                {reportData.attendanceRecords.map(record => (
-                  <tr key={record._id}>
-                    <td>{new Date(record.date).toLocaleDateString()}</td><td>{new Date(record.inTime).toLocaleTimeString()}</td><td>{new Date(record.outTime).toLocaleTimeString()}</td><td>{record.dutyHours.toFixed(2)}</td><td className="font-bold text-red-600">{record.overtimeHours.toFixed(2)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <button 
+            onClick={handlePrint} 
+            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-transform hover:scale-105"
+          >
+            🖨️ Print / Save as PDF
+          </button>
         )}
       </div>
-    </main>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+        <div>
+          <label htmlFor="employee" className="block text-sm font-medium text-gray-700 mb-1">Employee</label>
+          <select 
+            id="employee" 
+            value={selectedEmployee} 
+            onChange={(e) => setSelectedEmployee(e.target.value)} 
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          >
+            <option value="">-- Select --</option>
+            {employees.map(emp => <option key={emp._id} value={emp._id}>{emp.name} ({emp.employeeId})</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="month" className="block text-sm font-medium text-gray-700 mb-1">Month</label>
+          <input 
+            type="month" 
+            id="month" 
+            value={month} 
+            onChange={(e) => setMonth(e.target.value)} 
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" 
+          />
+        </div>
+        <button 
+          onClick={handleGenerateReport} 
+          disabled={isLoading} 
+          className="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all transform hover:scale-105"
+        >
+          {isLoading ? 'Generating...' : 'Generate Report'}
+        </button>
+      </div>
+      {message && <p className="mt-4 text-center font-semibold text-red-500">{message}</p>}
+    </div>
+
+    {/* --- রিপোর্ট দেখানোর সেকশন --- */}
+    {reportData && (
+      <div className="printable-area bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+        {/* রিপোর্ট হেডার */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-800">Overtime Report</h2>
+          <p className="text-gray-500">For the month of {new Date(month + '-02').toLocaleString('en-US', { month: 'long', year: 'numeric' })}</p>
+        </div>
+        <div className="flex justify-between items-start mb-8 text-sm">
+          <div>
+            <p className="font-semibold">Employee:</p>
+            <p>{reportData.employeeDetails.name} (ID: {reportData.employeeDetails.employeeId})</p>
+          </div>
+          <div className="text-right">
+            <p className="font-semibold">Report Date:</p>
+            <p>{new Date().toLocaleDateString()}</p>
+          </div>
+        </div>
+        
+        {/* সামারি কার্ড */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 text-center">
+          <div className="p-6 rounded-lg bg-green-50 border border-green-200 transition-shadow hover:shadow-md">
+            <h3 className="text-sm font-medium text-green-800 uppercase">Total Overtime</h3>
+            <p className="mt-2 text-3xl font-bold text-green-900">{summary.totalOvertime} <span className="text-lg font-medium">hours</span></p>
+          </div>
+          <div className="p-6 rounded-lg bg-yellow-50 border border-yellow-200 transition-shadow hover:shadow-md">
+            <h3 className="text-sm font-medium text-yellow-800 uppercase">Hourly Rate</h3>
+            <p className="mt-2 text-3xl font-bold text-yellow-900">{reportData.employeeDetails.hourlyRate} <span className="text-lg font-medium">BDT</span></p>
+          </div>
+          <div className="p-6 rounded-lg bg-red-50 border border-red-200 transition-shadow hover:shadow-md">
+            <h3 className="text-sm font-medium text-red-800 uppercase">Total Bill</h3>
+            <p className="mt-2 text-3xl font-bold text-red-900">{summary.totalBill} <span className="text-lg font-medium">BDT</span></p>
+          </div>
+        </div>
+        
+        {/* বিস্তারিত টেবিল */}
+        <h3 className="text-xl font-bold mb-4 mt-8">Detailed Attendance Log</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-100">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">In Time</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Out Time</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Duty Hours</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-red-500 uppercase tracking-wider">Overtime</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {reportData.attendanceRecords.map(record => (
+                <tr key={record._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{new Date(record.date).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(record.inTime).toLocaleTimeString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(record.outTime).toLocaleTimeString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.dutyHours.toFixed(2)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-600">{record.overtimeHours.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+  </div>
+</main>
   );
 }

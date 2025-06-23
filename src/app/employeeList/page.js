@@ -30,48 +30,97 @@ export default function EmployeesPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gray-50 p-4 sm:p-8 md:p-12">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Employee List</h1>
-          <Link href="/" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-            + Add New Employee
-          </Link>
-        </div>
-        
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          {isLoading ? (
-            <p className="text-center text-gray-500">Loading employees...</p>
-          ) : errorMessage ? (
-            <p className="text-center text-red-500">{errorMessage}</p>
-          ) : employees.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white">
-                <thead className="bg-gray-200">
-                  <tr>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Employee ID</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Name</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Designation</th>
-                    <th className="py-3 px-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Hourly Rate (BDT)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {employees.map((emp) => (
-                    <tr key={emp._id} className="hover:bg-gray-50">
-                      <td className="py-4 px-4 whitespace-nowrap text-sm font-medium text-gray-900">{emp.employeeId}</td>
-                      <td className="py-4 px-4 whitespace-nowrap text-sm text-gray-700">{emp.name}</td>
-                      <td className="py-4 px-4 whitespace-nowrap text-sm text-gray-700">{emp.designation || 'N/A'}</td>
-                      <td className="py-4 px-4 whitespace-nowrap text-sm text-gray-700">{emp.hourlyRate}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="text-center text-gray-500">No employees found. You can add one!</p>
-          )}
-        </div>
+    <main>
+  {/* মূল কন্টেইনারে প্যাডিং এবং সর্বোচ্চ প্রস্থ layout.js থেকে আসছে */}
+  <div className="space-y-8">
+
+    {/* --- পেজের হেডার --- */}
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Employee List</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          A list of all registered employees in the system.
+        </p>
       </div>
-    </main>
+      <Link 
+        href="/" 
+        className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform hover:scale-105"
+      >
+        + Add New Employee
+      </Link>
+    </div>
+
+    {/* --- এমপ্লয়ী টেবিলের কন্টেইনার --- */}
+    <div className="bg-white rounded-xl shadow-lg">
+      <div className="p-4 sm:p-6 lg:p-8">
+        {isLoading ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Loading employees...</p>
+          </div>
+        ) : errorMessage ? (
+          <div className="text-center py-12">
+            <p className="text-red-500 font-semibold">{errorMessage}</p>
+          </div>
+        ) : employees.length > 0 ? (
+          // --- মূল টেবিল ---
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Employee ID
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Designation
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    Hourly Rate (BDT)
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {employees.map((emp) => (
+                  <tr key={emp._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {emp.employeeId}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {emp.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {emp.designation || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800">
+                      {emp.hourlyRate}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          // --- সুন্দর এম্পটি স্টেট ---
+          <div className="text-center py-16">
+            <h3 className="text-lg font-medium text-gray-900">No Employees Found</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Get started by adding a new employee.
+            </p>
+            <div className="mt-6">
+              <Link
+                href="/"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+              >
+                + Add Employee
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</main>
   );
 }

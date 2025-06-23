@@ -103,71 +103,120 @@ export default function AttendancePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 p-4 sm:p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Monthly Attendance</h1>
-            <div>
-                <Link href="/reports" className="text-indigo-600 hover:text-indigo-800 font-semibold transition-colors">
-                    View Reports →
-                </Link>
-            </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 p-6 bg-white rounded-lg shadow-md">
-          <div>
-            <label htmlFor="employee" className="block text-sm font-medium text-gray-700 mb-1">Select Employee</label>
-            <select id="employee" value={selectedEmployee} onChange={(e) => setSelectedEmployee(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md shadow-sm">
-              <option value="">-- Select an Employee --</option>
-              {employees.map(emp => (
-                <option key={emp._id} value={emp._id}>{emp.name} ({emp.employeeId})</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="month" className="block text-sm font-medium text-gray-700 mb-1">Select Month</label>
-            <input type="month" id="month" value={month} onChange={(e) => setMonth(e.target.value)} className="w-full p-2 border border-gray-300 rounded-md shadow-sm" />
-          </div>
-        </div>
-
-        {selectedEmployee && (
-          <div className="bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-6">Attendance Sheet for: <span className="text-indigo-600">{employees.find(e => e._id === selectedEmployee)?.name}</span></h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="bg-gray-200">
-                  <tr>
-                    <th className="py-2 px-4 text-left">Date</th>
-                    <th className="py-2 px-4 text-left">Day</th>
-                    <th className="py-2 px-4 text-left">In Time</th>
-                    <th className="py-2 px-4 text-left">Out Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attendanceData.map(data => (
-                    <tr key={data.day} className="border-b hover:bg-gray-50">
-                      <td className="py-2 px-4">{data.date}</td>
-                      <td className="py-2 px-4">{new Date(data.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long' })}</td>
-                      <td className="py-2 px-4">
-                        <input type="time" value={data.inTime} onChange={(e) => handleInputChange(data.day, 'inTime', e.target.value)} className="p-1 border rounded-md w-full"/>
-                      </td>
-                      <td className="py-2 px-4">
-                        <input type="time" value={data.outTime} onChange={(e) => handleInputChange(data.day, 'outTime', e.target.value)} className="p-1 border rounded-md w-full"/>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="mt-8 flex justify-end items-center gap-4">
-              {message && <p className={`font-semibold ${message.includes('Error') || message.includes('Failed') ? 'text-red-500' : 'text-green-500'}`}>{message}</p>}
-              <button onClick={handleSave} disabled={isLoading} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg disabled:bg-green-400 disabled:cursor-not-allowed">
-                {isLoading ? 'Saving...' : 'Save Attendance'}
-              </button>
-            </div>
-          </div>
-        )}
+  <main>
+  {/* মূল কন্টেইনারে প্যাডিং এবং সর্বোচ্চ প্রস্থ layout.js থেকে আসছে */}
+  <div className="space-y-8">
+    
+    {/* --- পেজের হেডার --- */}
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Monthly Attendance</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Enter daily attendance or upload an Excel sheet.
+        </p>
       </div>
-    </main>
+      {/* "View Reports" বাটনটিকে আরও আকর্ষণীয় করা হয়েছে */}
+      <Link 
+        href="/reports" 
+        className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform hover:scale-105"
+      >
+        View Reports →
+      </Link>
+    </div>
+    
+    {/* --- ফিল্টার সেকশন --- */}
+    <div className="p-6 bg-white rounded-xl shadow-lg">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="employee" className="block text-sm font-medium text-gray-700 mb-1">
+            Select Employee
+          </label>
+          <select 
+            id="employee" 
+            value={selectedEmployee} 
+            onChange={(e) => setSelectedEmployee(e.target.value)} 
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          >
+            <option value="">-- Select an Employee --</option>
+            {employees.map(emp => (
+              <option key={emp._id} value={emp._id}>{emp.name} ({emp.employeeId})</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="month" className="block text-sm font-medium text-gray-700 mb-1">
+            Select Month
+          </label>
+          <input 
+            type="month" 
+            id="month" 
+            value={month} 
+            onChange={(e) => setMonth(e.target.value)} 
+            className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          />
+        </div>
+      </div>
+    </div>
+
+    {/* --- অ্যাটেনডেন্স টেবিল সেকশন --- */}
+    {selectedEmployee && (
+      <div className="bg-white p-4 sm:p-8 rounded-xl shadow-lg">
+        <h2 className="text-xl sm:text-2xl font-bold mb-6">
+          Attendance Sheet for: <span className="text-indigo-600">{employees.find(e => e._id === selectedEmployee)?.name}</span>
+        </h2>
+        {/* --- মোবাইল ডিভাইসের জন্য বিশেষ নোট --- */}
+        <p className="md:hidden text-sm text-center text-gray-500 bg-yellow-50 p-3 rounded-lg mb-4">
+          For a better experience, rotate your device or scroll the table horizontally.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-100">
+              <tr>
+                <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Day</th>
+                <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">In Time</th>
+                <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Out Time</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {attendanceData.map(data => (
+                <tr key={data.day} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{data.date}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(data.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long' })}</td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                    <input 
+                      type="time" 
+                      value={data.inTime} 
+                      onChange={(e) => handleInputChange(data.day, 'inTime', e.target.value)} 
+                      className="p-2 border rounded-lg w-full focus:ring-1 focus:ring-indigo-500"
+                    />
+                  </td>
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                    <input 
+                      type="time" 
+                      value={data.outTime} 
+                      onChange={(e) => handleInputChange(data.day, 'outTime', e.target.value)} 
+                      className="p-2 border rounded-lg w-full focus:ring-1 focus:ring-indigo-500"
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-8 flex flex-col sm:flex-row justify-end items-center gap-4">
+          {message && <p className="font-semibold text-center sm:text-left">{message}</p>}
+          <button 
+            onClick={handleSave} 
+            disabled={isLoading} 
+            className="w-full sm:w-auto px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 disabled:bg-green-400 disabled:cursor-not-allowed transition-all transform hover:scale-105"
+          >
+            {isLoading ? 'Saving...' : 'Save Attendance'}
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+</main>
   );
 }

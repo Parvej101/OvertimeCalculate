@@ -59,29 +59,130 @@ export default function AddEmployeePage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-md">
-        <div className="flex justify-end mb-4">
-          <Link href="/employeeList" className="text-indigo-600 hover:text-indigo-800 font-semibold">
-            View Employee List →
-          </Link>
-        </div>
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Add New Employee</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div><label htmlFor="employeeId" className="block text-sm font-medium text-gray-700">Employee ID</label><input id="employeeId" type="text" value={employeeId} onChange={(e) => setEmployeeId(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required /></div>
-            <div><label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label><input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required /></div>
-            <div><label htmlFor="designation" className="block text-sm font-medium text-gray-700">Designation</label><input id="designation" type="text" value={designation} onChange={(e) => setDesignation(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" /></div>
-            <div><label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700">Overtime Hourly Rate (Taka)</label><input id="hourlyRate" type="number" step="any" value={hourlyRate} onChange={(e) => setHourlyRate(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required /></div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Standard Duty Time</label>
-              <div className="mt-1 flex items-center space-x-2"><input type="number" value={dutyHours} onChange={(e) => setDutyHours(e.target.value)} className="w-1/2 px-3 py-2 border border-gray-300 rounded-md" placeholder="Hours" min="0" /><span className="text-gray-500">hr</span><input type="number" value={dutyMinutes} onChange={(e) => setDutyMinutes(e.target.value)} className="w-1/2 px-3 py-2 border border-gray-300 rounded-md" placeholder="Minutes" min="0" max="59" /><span className="text-gray-500">min</span></div>
-            </div>
-            <div><button type="submit" disabled={isLoading} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400"> {isLoading ? 'Adding...' : 'Add Employee'} </button></div>
-          </form>
-          {errorMessage && <p className="mt-4 text-center text-red-600 font-medium">{errorMessage}</p>}
-        </div>
+   <main>
+  {/* মূল কন্টেইনারে প্যাডিং এবং সর্বোচ্চ প্রস্থ layout.js থেকে আসছে */}
+  <div className="flex flex-col items-center">
+    {/* --- ফর্মের কন্টেইনার --- */}
+    <div className="w-full max-w-2xl bg-white p-8 sm:p-10 rounded-2xl shadow-lg space-y-6">
+      
+      {/* --- হেডার সেকশন --- */}
+      <div className="text-center">
+        <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">
+          Create New Employee Profile
+        </h1>
+        <p className="mt-2 text-sm text-gray-500">
+          Fill in the details below to add a new employee to the system.
+        </p>
       </div>
-    </main>
+      
+      {/* --- ফর্ম --- */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        
+        {/* Employee ID and Name in a responsive grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="employeeId" className="block text-sm font-medium text-gray-700">Employee ID</label>
+            <input 
+              id="employeeId" 
+              type="text" 
+              value={employeeId} 
+              onChange={(e) => setEmployeeId(e.target.value)} 
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" 
+              required 
+              placeholder="e.g., 101"
+            />
+          </div>
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
+            <input 
+              id="name" 
+              type="text" 
+              value={name} 
+              onChange={(e) => setName(e.target.value)} 
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" 
+              required 
+              placeholder="e.g., John Doe"
+            />
+          </div>
+        </div>
+        
+        {/* Designation and Hourly Rate */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="designation" className="block text-sm font-medium text-gray-700">Designation</label>
+            <input 
+              id="designation" 
+              type="text" 
+              value={designation} 
+              onChange={(e) => setDesignation(e.target.value)} 
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              placeholder="e.g., Software Engineer"
+            />
+          </div>
+          <div>
+            <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700">Overtime Hourly Rate (Taka)</label>
+            <input 
+              id="hourlyRate" 
+              type="number" 
+              step="any" 
+              value={hourlyRate} 
+              onChange={(e) => setHourlyRate(e.target.value)} 
+              className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" 
+              required 
+              placeholder="e.g., 150"
+            />
+          </div>
+        </div>
+        
+        {/* Standard Duty Time */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Standard Duty Time</label>
+          <div className="mt-1 grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="dutyHours" className="text-xs text-gray-500">Hours</label>
+              <input 
+                id="dutyHours"
+                type="number" 
+                value={dutyHours} 
+                onChange={(e) => setDutyHours(e.target.value)} 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm"
+                min="0"
+              />
+            </div>
+            <div>
+              <label htmlFor="dutyMinutes" className="text-xs text-gray-500">Minutes</label>
+              <input 
+                id="dutyMinutes"
+                type="number" 
+                value={dutyMinutes} 
+                onChange={(e) => setDutyMinutes(e.target.value)} 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm"
+                min="0" 
+                max="59" 
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Submit Button */}
+        <div>
+          <button 
+            type="submit" 
+            disabled={isLoading} 
+            className="w-full flex justify-center py-3 px-4 mt-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all transform hover:scale-105"
+          >
+            {isLoading ? 'Adding...' : 'Add Employee'}
+          </button>
+        </div>
+      </form>
+      
+      {errorMessage && (
+        <div className="mt-4 p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg">
+          <p className="text-center font-medium">{errorMessage}</p>
+        </div>
+      )}
+    </div>
+  </div>
+</main>
   );
 }
