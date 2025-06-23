@@ -1,16 +1,14 @@
-@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -23,4 +21,79 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@media print {
+  /* অপ্রয়োজনীয় অংশ লুকানো */
+  .no-print, nav {
+    display: none !important;
+  }
+
+  /* পৃষ্ঠার আকার এবং মার্জিন নির্ধারণ */
+  @page {
+    size: A4;
+    margin: 10mm; 
+  }
+
+  /* body এবং html রিসেট */
+  body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: white !important;
+    font-size: 10pt; /* বেস ফন্ট সাইজ ৯ পয়েন্ট করা হলো */
+    line-height: 1.4; /* লাইন হাইট কমানো হলো */
+  }
+
+  /* প্রিন্টেবল অংশটিকে প্রস্তুত করা */
+  .printable-area, .printable-area * {
+    visibility: visible;
+  }
+  .printable-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  /* টেক্সট এবং হেডিংয়ের স্টাইল */
+  .printable-area h2, .printable-area h3 {
+    margin-top: 10px;
+    margin-bottom: 8px;
+    font-size: 12pt !important;
+  }
+  .printable-area p {
+    margin: 2px 0;
+  }
+
+  /* সামারি কার্ডগুলোর স্টাইল আরও কম্প্যাক্ট করা */
+  .printable-area .grid-cols-3 > div {
+    padding: 8px !important; /* কার্ডের প্যাডিং কমানো হলো */
+  }
+  .printable-area .grid-cols-3 h3 {
+    font-size: 10pt !important;
+    margin-bottom: 4px;
+  }
+  .printable-area .grid-cols-3 p {
+    font-size: 14pt !important;
+  }
+
+  /* টেবিলের স্টাইল আরও কম্প্যাক্ট করা */
+  .printable-area table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .printable-area th, .printable-area td {
+    border: 1px solid #ddd !important;
+    padding: 3px 5px !important; /* সেলের প্যাডিং কমানো হলো */
+    text-align: left;
+  }
+  .printable-area .text-center {
+    text-align: center !important;
+  }
+  
+  /* অপ্রয়োজনীয় শ্যাডো, বর্ডার ইত্যাদি বাদ দেওয়া */
+  .printable-area .shadow-md, .printable-area .rounded-lg {
+    box-shadow: none !important;
+    border: 1px solid #eee !important;
+  }
 }
