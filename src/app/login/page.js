@@ -38,6 +38,11 @@ export default function LoginPage() {
         throw new Error(res.error);
       }
 
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Successful',
+        text: "Welcome back!",
+      });
       // লগইন সফল হলে হোমপেজে বা ড্যাশবোর্ডে রিডাইরেক্ট করা
       router.replace("/");
 
@@ -53,8 +58,7 @@ export default function LoginPage() {
   };
 
   return (
-    // আমরা Navbar-কে বাদ দিয়ে একটি সম্পূর্ণ সেন্টারে থাকা লগইন পেজ তৈরি করব
-    // তাই layout.js থেকে আসা main প্যাডিং এখানে কাজ করবে না
+
     <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 4rem)' }}> {/* 4rem = h-16 (Navbar height) */}
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-lg">
         <div className="text-center">

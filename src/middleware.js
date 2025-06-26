@@ -1,11 +1,19 @@
-// src/middleware.js
+import { withAuth } from "next-auth/middleware";
 
-export { default } from "next-auth/middleware";
+export default withAuth({
+  pages: {
+    signIn: "/login", // যদি ব্যবহারকারী লগইন করা না থাকে, তাকে এখানে পাঠানো হবে
+  },
+});
 
+// এই matcher কনফিগারেশনটি কোন কোন পেজকে সুরক্ষিত করবে তা নির্ধারণ করে
 export const config = {
-  // --- সমাধান: matcher-এ /api/setup-admin যোগ করা ---
   matcher: [
-    // /login, /register, এবং এখন /api/setup-admin পেজ ছাড়া বাকি সব সুরক্ষিত
-    "/((?!api/register|api/setup-admin|login|_next/static|_next/image|favicon.ico).*)",
+    /*
+     * নিচের পাথগুলো ছাড়া বাকি সব পাথকে সুরক্ষিত করা হবে।
+     * এটি নিশ্চিত করে যে /login, /register, এবং API রুটগুলো সুরক্ষিত নয়,
+     * কিন্তু বাকি সবকিছু (যেমন: /, /employeeList, /attendance) সুরক্ষিত।
+     */
+    "/((?!api|login|register|_next/static|_next/image|favicon.ico).*)",
   ],
 };
