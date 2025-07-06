@@ -1,7 +1,3 @@
 {
-  "functions": {
-    "api/**/*.js": {
-      "timezone": "Asia/Dhaka"
-    }
-  }
+  "timezone": "Asia/Dhaka"
 }
