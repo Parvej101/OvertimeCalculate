@@ -1,29 +1,26 @@
 import connectDB from "@/lib/mongodb";
 import Attendance from "@/models/Attendance";
-import Employee from "@/models/Employee"; // Employee মডেল ইম্পোর্ট করা আবশ্যক
+import Employee from "@/models/Employee";
 import { calculateOvertime } from "@/lib/calculation";
 import { NextResponse } from "next/server";
 
+// --- POST: অ্যাটেনডেন্স যোগ বা আপডেট করার জন্য ---
 export async function POST(req) {
   try {
     await connectDB();
-
     const body = await req.json();
     const { employeeId, attendanceRecords } = body;
 
-    // --- Validation ---
     if (!employeeId || !attendanceRecords || !Array.isArray(attendanceRecords)) {
-      return NextResponse.json({ message: "Invalid request body. Employee ID and attendance records are required." }, { status: 400 });
+      return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
     }
 
-    // --- Fetch employee's duty time ---
     const employee = await Employee.findById(employeeId);
     if (!employee) {
       return NextResponse.json({ message: "Employee not found." }, { status: 404 });
     }
     const standardDutyMinutes = employee.standardDutyMinutes;
 
-    // --- Prepare bulk operations for MongoDB ---
     const bulkOps = [];
 
     for (const record of attendanceRecords) {
@@ -36,34 +33,45 @@ export async function POST(req) {
           standardDutyMinutes
         );
 
-        if (inTime && outTime && dutyHours >= 0) { // Ensure valid calculation
+        if (inTime && outTime && dutyHours >= 0) {
+          
+          // --- সমাধান: তারিখের শুরু এবং শেষ দিয়ে একটি রেঞ্জ তৈরি করা ---
+          const startOfDay = new Date(record.date + 'T00:00:00.000Z');
+          const endOfDay = new Date(record.date + 'T23:59:59.999Z');
+
           bulkOps.push({
             updateOne: {
-              filter: { employee: employeeId, date: new Date(record.date) },
+              // --- সমাধান: তারিখের রেঞ্জ দিয়ে ফিল্টার করা ---
+              filter: { 
+                employee: employeeId, 
+                date: {
+                  $gte: startOfDay,
+                  $lte: endOfDay
+                }
+              },
               update: {
                 $set: {
-                  employee: employeeId, // Ensure employee field is set
-                  date: new Date(record.date),
+                  employee: employeeId,
+                  date: startOfDay, // তারিখটিকে সবসময় দিনের শুরু হিসেবে সেভ করা
                   inTime,
                   outTime,
                   dutyHours,
                   overtimeHours,
                 },
               },
-              upsert: true, // Creates a new doc if none is found
+              upsert: true,
             },
           });
         }
       }
     }
 
-    // --- Execute bulk write if there are operations ---
     if (bulkOps.length > 0) {
       await Attendance.bulkWrite(bulkOps);
     }
 
     return NextResponse.json(
-      { message: `Attendance saved successfully. Processed ${bulkOps.length} records.` },
+      { message: `Attendance saved/updated successfully. Processed ${bulkOps.length} records.` },
       { status: 200 }
     );
 
@@ -73,5 +81,35 @@ export async function POST(req) {
       { message: "An internal server error occurred.", error: error.message },
       { status: 500 }
     );
+  }
+}
+
+
+// --- GET ফাংশন (অপরিবর্তিত থাকবে) ---
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const employeeId = searchParams.get('employeeId');
+    const month = searchParams.get('month');
+
+    if (!employeeId || !month) {
+      return NextResponse.json({ message: "Employee ID and month are required." }, { status: 400 });
+    }
+
+    await connectDB();
+
+    const [year, m] = month.split('-').map(Number);
+    const startDate = new Date(year, m - 1, 1);
+    const endDate = new Date(year, m, 0, 23, 59, 59);
+
+    const records = await Attendance.find({
+      employee: employeeId,
+      date: { $gte: startDate, $lte: endDate },
+    }).sort({ date: 'asc' });
+
+    return NextResponse.json({ records }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    return NextResponse.json({ message: "Failed to fetch attendance records." }, { status: 500 });
   }
 }

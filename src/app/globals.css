@@ -97,3 +97,23 @@ body {
     border: 1px solid #eee !important;
   }
 }
+
+/* --- react-time-picker-এর জন্য কাস্টম স্টাইল --- */
+.react-time-picker-custom .react-time-picker__wrapper {
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 0.5rem; /* p-2 */
+  width: 100%;
+}
+
+.react-time-picker-custom .react-time-picker__inputGroup__input {
+  outline: none;
+}
+
+.react-time-picker-custom .react-time-picker__inputGroup__input:focus {
+  outline: none;
+}
+
+.react-time-picker__clock {
+    z-index: 100 !important; /* নিশ্চিত করে যে ক্লকটি অন্য সবকিছুর উপরে থাকবে */
+}
