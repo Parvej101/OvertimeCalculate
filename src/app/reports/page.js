@@ -11,7 +11,16 @@ export default function ReportPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  // ... (useEffect, handleGenerateReport, summary ফাংশনগুলো আগের মতোই থাকবে)
+  // --- নতুন: দশমিক ঘন্টাকে "Xh Ym" ফরম্যাটে রূপান্তর করার ফাংশন ---
+  const formatDecimalHours = (decimalHours) => {
+    if (typeof decimalHours !== 'number' || decimalHours < 0) {
+      return '0h 0m';
+    }
+    const hours = Math.floor(decimalHours);
+    const minutes = Math.round((decimalHours - hours) * 60);
+    return `${hours}h ${minutes}m`;
+  };
+
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -44,46 +53,38 @@ export default function ReportPage() {
   };
 
   const summary = useMemo(() => {
-    if (!reportData) return { totalOvertime: 0, totalBill: 0 };
-    const totalOvertime = reportData.attendanceRecords.reduce((acc, record) => acc + (record.overtimeHours || 0), 0);
+    if (!reportData) return { totalOvertimeDecimal: 0, totalBill: "0.00" };
+    // --- পরিবর্তন: totalOvertime এখন totalOvertimeDecimal নামে সেভ হবে ---
+    const totalOvertimeDecimal = reportData.attendanceRecords.reduce((acc, record) => acc + (record.overtimeHours || 0), 0);
     const hourlyRate = reportData.employeeDetails?.hourlyRate || 0;
-    const totalBill = totalOvertime * hourlyRate;
+    const totalBill = totalOvertimeDecimal * hourlyRate;
     return {
-      totalOvertime: totalOvertime.toFixed(2),
+      totalOvertimeDecimal: totalOvertimeDecimal,
       totalBill: totalBill.toFixed(2)
     };
   }, [reportData]);
 
-  // প্রিন্ট করার জন্য সহজ জাভাস্ক্রিপ্ট ফাংশন
   const handlePrint = () => {
     window.print();
   };
 
   return (
    <main>
-  {/* মূল কন্টেইনারে প্যাডিং এবং সর্বোচ্চ প্রস্থ layout.js থেকে আসছে */}
-  <div className="space-y-8">
-    
-    {/* --- ফিল্টার এবং বাটন সেকশন --- */}
-    <div className="no-print p-6 bg-white rounded-xl shadow-lg">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Monthly Reports</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Select an employee and month to generate a report.
-          </p>
+    <div className="space-y-8">
+      
+      <div className="no-print p-6 bg-white rounded-xl shadow-lg">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Monthly Reports</h1>
+            <p className="mt-1 text-sm text-gray-500">Select an employee and month to generate a report.</p>
+          </div>
+          {reportData && (
+            <button onClick={handlePrint} className="w-full sm:w-auto ...">
+              🖨️ Print / Save as PDF
+            </button>
+          )}
         </div>
-        {/* রিপোর্ট জেনারেট হলেই শুধু প্রিন্ট বাটনটি দেখানো হবে */}
-        {reportData && (
-          <button 
-            onClick={handlePrint} 
-            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-transform hover:scale-105"
-          >
-            🖨️ Print / Save as PDF
-          </button>
-        )}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
         <div>
           <label htmlFor="employee" className="block text-sm font-medium text-gray-700 mb-1">Employee</label>
           <select 
@@ -114,73 +115,65 @@ export default function ReportPage() {
           {isLoading ? 'Generating...' : 'Generate Report'}
         </button>
       </div>
-      {message && <p className="mt-4 text-center font-semibold text-red-500">{message}</p>}
-    </div>
-
-    {/* --- রিপোর্ট দেখানোর সেকশন --- */}
-    {reportData && (
-      <div className="printable-area bg-white p-6 sm:p-8 rounded-xl shadow-lg">
-        {/* রিপোর্ট হেডার */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">Overtime Report</h2>
-          <p className="text-gray-500">For the month of {new Date(month + '-02').toLocaleString('en-US', { month: 'long', year: 'numeric' })}</p>
-        </div>
-        <div className="flex justify-between items-start mb-8 text-sm">
-          <div>
-            <p className="font-semibold">Employee:</p>
-            <p>{reportData.employeeDetails.name} (ID: {reportData.employeeDetails.employeeId})</p>
-          </div>
-          <div className="text-right">
-            <p className="font-semibold">Report Date:</p>
-            <p>{new Date().toLocaleDateString()}</p>
-          </div>
-        </div>
-        
-        {/* সামারি কার্ড */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 text-center">
-          <div className="p-6 rounded-lg bg-green-50 border border-green-200 transition-shadow hover:shadow-md">
-            <h3 className="text-sm font-medium text-green-800 uppercase">Total Overtime</h3>
-            <p className="mt-2 text-3xl font-bold text-green-900">{summary.totalOvertime} <span className="text-lg font-medium">hours</span></p>
-          </div>
-          <div className="p-6 rounded-lg bg-yellow-50 border border-yellow-200 transition-shadow hover:shadow-md">
-            <h3 className="text-sm font-medium text-yellow-800 uppercase">Hourly Rate</h3>
-            <p className="mt-2 text-3xl font-bold text-yellow-900">{reportData.employeeDetails.hourlyRate} <span className="text-lg font-medium">BDT</span></p>
-          </div>
-          <div className="p-6 rounded-lg bg-red-50 border border-red-200 transition-shadow hover:shadow-md">
-            <h3 className="text-sm font-medium text-red-800 uppercase">Total Bill</h3>
-            <p className="mt-2 text-3xl font-bold text-red-900">{summary.totalBill} <span className="text-lg font-medium">BDT</span></p>
-          </div>
-        </div>
-        
-        {/* বিস্তারিত টেবিল */}
-        <h3 className="text-xl font-bold mb-4 mt-8">Detailed Attendance Log</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">In Time</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Out Time</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Duty Hours</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-red-500 uppercase tracking-wider">Overtime</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {reportData.attendanceRecords.map(record => (
-                <tr key={record._id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{new Date(record.date).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(record.inTime).toLocaleTimeString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(record.outTime).toLocaleTimeString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{record.dutyHours.toFixed(2)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-red-600">{record.overtimeHours.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {message && <p className="mt-4 text-center font-semibold text-red-500">{message}</p>}
       </div>
-    )}
-  </div>
-</main>
+
+      {reportData && (
+        <div className="printable-area bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-800">Overtime Report</h2>
+            <p className="text-gray-500">For the month of {new Date(month + '-02').toLocaleString('en-US', { month: 'long', year: 'numeric' })}</p>
+          </div>
+          <div className="flex justify-between items-start mb-8 text-sm">
+            <div><p><strong>Employee:</strong> {reportData.employeeDetails.name} (ID: {reportData.employeeDetails.employeeId})</p></div>
+            <div className="text-right"><p><strong>Report Date:</strong> {new Date().toLocaleDateString()}</p></div>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 text-center">
+            <div className="p-6 rounded-lg bg-green-50 ...">
+              <h3 className="... uppercase">Total Overtime</h3>
+              {/* --- পরিবর্তন --- */}
+              <p className="mt-2 text-3xl font-bold text-green-900">{formatDecimalHours(summary.totalOvertimeDecimal)}</p>
+            </div>
+            <div className="p-6 rounded-lg bg-yellow-50 ...">
+              <h3 className="... uppercase">Hourly Rate</h3>
+              <p className="mt-2 text-3xl font-bold text-yellow-900">{reportData.employeeDetails.hourlyRate} <span className="text-lg font-medium">BDT</span></p>
+            </div>
+            <div className="p-6 rounded-lg bg-red-50 ...">
+              <h3 className="... uppercase">Total Bill</h3>
+              <p className="mt-2 text-3xl font-bold text-red-900">{summary.totalBill} <span className="text-lg font-medium">BDT</span></p>
+            </div>
+          </div>
+          
+          <h3 className="text-xl font-bold mb-4 mt-8">Detailed Attendance Log</h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th scope="col" className="...">Date</th>
+                  <th scope="col" className="...">In Time</th>
+                  <th scope="col" className="...">Out Time</th>
+                  <th scope="col" className="...">Duty Hours</th>
+                  <th scope="col" className="... text-red-500">Overtime</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200 text-center">
+                {reportData.attendanceRecords.map(record => (
+                  <tr key={record._id} className="hover:bg-gray-50">
+                    <td className="...">{new Date(record.date).toLocaleDateString()}</td>
+                    <td className="...">{new Date(record.inTime).toLocaleTimeString()}</td>
+                    <td className="...">{new Date(record.outTime).toLocaleTimeString()}</td>
+                    {/* --- পরিবর্তন --- */}
+                    <td className="...">{formatDecimalHours(record.dutyHours)}</td>
+                    <td className="... font-bold text-red-600">{formatDecimalHours(record.overtimeHours)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  </main>
   );
 }
