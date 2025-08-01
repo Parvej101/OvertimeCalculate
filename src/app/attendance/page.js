@@ -3,11 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Swal from 'sweetalert2';
-
-// --- নতুন: react-time-picker এবং এর CSS ইম্পোর্ট করা ---
 import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
+import { DateTime } from 'luxon'; // Luxon ইম্পোর্ট করা
 
 export default function AttendancePage() {
   const [employees, setEmployees] = useState([]);
@@ -19,7 +18,9 @@ export default function AttendancePage() {
   const [isSheetLoading, setIsSheetLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // --- ডেটা লোড করার ফাংশন ---
+  const timeZone = 'Asia/Dhaka'; // আপনার নির্দিষ্ট টাইমজোন
+
+  // --- ডেটা লোড করার চূড়ান্ত এবং নির্ভরযোগ্য ফাংশন ---
   const fetchAndPrepareSheet = async () => {
     if (!selectedEmployee || !month) {
       setAttendanceData([]);
@@ -42,10 +43,18 @@ export default function AttendancePage() {
       
       const { records } = await res.json();
       
+      const recordsMap = new Map(
+        records.map(r => [
+          DateTime.fromISO(r.date).setZone(timeZone).toISODate(), // Key: "YYYY-MM-DD"
+          r,
+        ])
+      );
+
       const mergedSheet = blankSheet.map(dayInfo => {
-        const dbRecord = records.find(r => new Date(r.date).getUTCDate() === dayInfo.day);
+        const dbRecord = recordsMap.get(dayInfo.date);
+
         if (dbRecord) {
-          const formatTime = (date) => new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+          const formatTime = (isoString) => DateTime.fromISO(isoString).setZone(timeZone).toFormat('HH:mm');
           return {
             ...dayInfo,
             inTime: formatTime(dbRecord.inTime),
@@ -97,6 +106,7 @@ export default function AttendancePage() {
     }
     
     setIsSaving(true);
+    
     const recordsToSave = attendanceData.filter(record => record.inTime && record.outTime);
 
     if (recordsToSave.length === 0) {
@@ -120,11 +130,11 @@ export default function AttendancePage() {
         Swal.fire({
           icon: 'success',
           title: 'Success!',
-          text: data.message || 'Attendance has been saved/updated successfully!',
+          text: data.message || 'Attendance updated successfully!',
           timer: 2000,
           showConfirmButton: false,
         });
-        fetchAndPrepareSheet();
+        fetchAndPrepareSheet(); // UI রিফ্রেশ করা
       } else {
         throw new Error(data.message || 'Failed to save attendance.');
       }
@@ -193,16 +203,15 @@ export default function AttendancePage() {
                           <td className="px-4 py-2 whitespace-nowrap text-sm">{data.date}</td>
                           <td className="px-4 py-2 whitespace-nowrap text-sm">{new Date(data.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long' })}</td>
                           
-                          {/* --- সমাধান: TimePicker কম্পোনেন্ট ব্যবহার --- */}
                           <td className="px-4 py-2">
                             <TimePicker
                               onChange={(time) => handleInputChange(data.day, 'inTime', time)}
                               value={data.inTime || null}
-                              format="HH:mm"      // ২৪-ঘন্টার ফরম্যাট
-                              locale="sv-SE"      // UI-কে ২৪-ঘন্টার ফরম্যাটে দেখানোর জন্য
-                              disableClock={false} // ঘড়ি দেখানো হবে
-                              clearIcon={null}    // ক্লিয়ার আইকন বাদ দেওয়া
-                              className="react-time-picker-custom" // কাস্টম স্টাইলের জন্য
+                              format="HH:mm"
+                              locale="sv-SE"
+                              disableClock={false}
+                              clearIcon={null}
+                              className="react-time-picker-custom"
                             />
                           </td>
                           <td className="px-4 py-2">
