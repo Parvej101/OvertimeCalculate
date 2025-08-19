@@ -38,13 +38,8 @@ export default function LoginPage() {
         throw new Error(res.error);
       }
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Login Successful',
-        text: "Welcome back!",
-      });
-      // লগইন সফল হলে হোমপেজে বা ড্যাশবোর্ডে রিডাইরেক্ট করা
       router.replace("/");
+ 
 
     } catch (error) {
       Swal.fire({
