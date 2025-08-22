@@ -158,7 +158,7 @@ export default function AttendancePage() {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Monthly Attendance</h1>
             <p className="mt-1 text-sm text-gray-500">Manage daily attendance for employees.</p>
           </div>
-          <Link href="/reports" className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+          <Link href="/reports" className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-[#11b1e6] hover:bg-[#00424D]">
             View Reports →
           </Link>
         </div>

@@ -110,7 +110,7 @@ export default function ReportPage() {
             <button
               onClick={handleGenerateReport}
               disabled={isLoading}
-              className="w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all transform hover:scale-105"
+              className="w-full px-6 py-3 bg-[#11b1e6] text-white font-semibold rounded-lg shadow-md hover:bg-[#00424D] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all transform hover:scale-105"
             >
               {isLoading ? 'Generating...' : 'Generate Report'}
             </button>

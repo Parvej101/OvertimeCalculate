@@ -42,7 +42,7 @@ export default function EditEmployeeModal({ employee, onClose, onSave }) {
           {/* ... অন্যান্য ফিল্ডও যোগ করতে পারেন ... */}
           <div className="flex justify-end gap-4 mt-8">
             <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg">Save Changes</button>
+            <button type="submit" className="px-4 py-2 bg-[#11b1e6] text-white rounded-lg">Save Changes</button>
           </div>
         </form>
       </div>

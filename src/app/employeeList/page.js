@@ -86,7 +86,7 @@ export default function EmployeesPage() {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Employee Profiles</h1>
             <p className="mt-1 text-sm text-gray-500">View and manage all employee records.</p>
           </div>
-          <Link href="/" className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-indigo-700 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform hover:scale-105">
+          <Link href="/" className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-[#11b1e6] hover:bg-[#00424D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform hover:scale-105">
             + Add New Employee
           </Link>
         </div>
@@ -132,7 +132,7 @@ export default function EmployeesPage() {
                 <h3 className="text-lg font-medium text-gray-900">No Employees Found</h3>
                 <p className="mt-1 text-sm text-gray-500">Get started by adding a new employee.</p>
                 <div className="mt-6">
-                  <Link href="/" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">+ Add Employee</Link>
+                  <Link href="/" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#11b1e6] hover:bg-[#00424D]">+ Add Employee</Link>
                 </div>
               </div>
             )}

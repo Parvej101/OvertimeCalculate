@@ -46,7 +46,7 @@ export default function Navbar() {
                     key={link.href}
                     href={link.href}
                     className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
-                      ? 'bg-indigo-600 text-white'
+                      ? 'bg-[#11b1e6] text-white'
                       : 'text-gray-600 hover:bg-gray-100'
                       }`}
                   >
@@ -95,7 +95,7 @@ export default function Navbar() {
                   href={link.href}
                   onClick={() => setIsOpen(false)} // লিঙ্কে ক্লিক করলে মেনু বন্ধ হয়ে যাবে
                   className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-[#11b1e6] text-white'
                     : 'text-gray-600 hover:bg-gray-100'
                     }`}
                 >

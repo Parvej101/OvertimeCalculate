@@ -186,7 +186,7 @@ export default function AddEmployeePage() {
               <button 
                 type="submit" 
                 disabled={isLoading} 
-                className="w-full flex justify-center py-3 px-4 mt-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all transform hover:scale-105"
+                className="w-full flex justify-center py-3 px-4 mt-4 border border-transparent rounded-lg shadow-lg text-base font-medium text-white bg-[#11b1e6] hover:bg-[#00424D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-all transform hover:scale-105"
               >
                 {isLoading ? 'Adding...' : 'Add Employee'}
               </button>
