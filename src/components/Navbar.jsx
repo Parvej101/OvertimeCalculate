@@ -20,9 +20,20 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* === লোগো / ব্র্যান্ডের নাম === */}
           <div className="flex-shrink-0">
-            <Link href="/" className="text-2xl font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-              OvertimeCal
-            </Link>
+            <div className='flex items-center '>
+              <div className='w-15 h-15'>
+                <img src="/icon.png" alt="" />
+              </div>
+              <div>
+
+                <Link href="/" className="text-2xl font-bold text-[#11b1e6] hover:text-[#5ce1e6] transition-colors">
+                  OvertimeCal
+                </Link>
+
+              </div>
+
+            </div>
+
           </div>
 
           {/* === ডেস্কটপ মেনু (বড় স্ক্রিনের জন্য) === */}
@@ -34,11 +45,10 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'bg-indigo-600 text-white'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+                      ? 'bg-indigo-600 text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                      }`}
                   >
                     {link.label}
                   </Link>
@@ -84,11 +94,10 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)} // লিঙ্কে ক্লিক করলে মেনু বন্ধ হয়ে যাবে
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    isActive
-                      ? 'bg-indigo-600 text-white'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive
+                    ? 'bg-indigo-600 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                    }`}
                 >
                   {link.label}
                 </Link>
